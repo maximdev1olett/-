@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8" />
+  <title>Котокликер </title>
+  <link rel="icon" href="favicon.png.png" type="image/png">
+  <style>
+    body {
+      position: relative;
+      background-color: #1e1e1e;
+      color: white;
+      font-family: Arial, sans-serif;
+      margin: 40px;
+      font-size: 20px;
+    }
+
+    .snake-stripes {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: -1;
+    }
+
+    .stripe {
+      position: absolute;
+      width: 120vw;
+      height: 30px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(255, 255, 255, 0.15) 30%,
+        rgba(255, 255, 255, 0.4) 50%,
+        rgba(255, 255, 255, 0.15) 70%,
+        transparent 100%
+      );
+      filter: blur(1px);
+      opacity: 0.6;
+      animation-timing-function: linear;
+    }
+
+    .stripe:nth-child(1) { top: 10%; animation: moveRight 20s linear infinite, waveY1 4s ease-in-out infinite; }
+    .stripe:nth-child(2) { top: 30%; animation: moveRight 25s linear infinite, waveY2 5s ease-in-out infinite; }
+    .stripe:nth-child(3) { top: 50%; animation: moveRight 22s linear infinite, waveY3 3.5s ease-in-out infinite; }
+    .stripe:nth-child(4) { top: 70%; animation: moveRight 18s linear infinite, waveY4 4.5s ease-in-out infinite; }
+    .stripe:nth-child(5) { top: 85%; animation: moveRight 30s linear infinite, waveY5 6s ease-in-out infinite; }
+
+    @keyframes moveRight {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
+    }
+
+    @keyframes waveY1 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(15px); } }
+    @keyframes waveY2 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-20px); } }
+    @keyframes waveY3 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+    @keyframes waveY4 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-15px); } }
+    @keyframes waveY5 { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(20px); } }
+
+    .clicker-container {
+      text-align: center;
+    }
+
+    img {
+      width: 300px;
+      border-radius: 12px;
+      box-shadow: 0 0 20px #00ff99;
+      margin-top: 20px;
+    }
+
+    button {
+      background-color: #00ff99;
+      color: black;
+      border: none;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 10px;
+      transition: transform 0.2s ease, background-color 0.3s ease;
+      box-shadow: 0 0 10px #00ff99;
+    }
+
+    button:hover {
+      background-color: #00cc77;
+      transform: scale(1.05);
+    }
+
+    h1 {
+      color: #00ff99;
+    }
+
+    .store {
+      background: #333;
+      padding: 15px;
+      margin-top: 20px;
+      border-radius: 10px;
+    }
+
+    .coin-icon {
+      font-weight: bold;
+      color: #ffd700;
+    }
+  </style>
+</head>
+<body>
+
+<div class="snake-stripes">
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+  <div class="stripe"></div>
+</div>
+
+<div class="clicker-container">
+  <h1>Котокликер</h1>
+  <p>Котокоины: <span class="coin-icon">💵</span><span id="coins">0</span></p>
+  <p>Котокоины за клик: <span id="perClick">1</span></p>
+
+  <img src="kliker.jpg.jpg" onclick="clickCoin()" alt="Кликни" style="width:200px; cursor:pointer;" />
+  <p>Тапай на кота!</p>
+
+  <div class="store">
+    <h2>Магазин</h2>
+    <button onclick="buyUpgrade()">Улучшить клик (💵<span id="upgradeCost">10</span>)</button><br>
+    <button onclick="buyAutoClicker()">Автокликер на 1 мин (💵<span id="autoClickerCost">50</span>)</button>
+  </div>
+</div>
+
+<h1>Привет. я Максон!</h1>
+<p>Мне 14, пытаюсь делать сайты. Мой первый сайт.</p>
+
+<img src="sem.jpg.JPG" alt="Семенус">
+<p>Это Семенус</p>
+
+<img src="dima.jpg.JPG" alt="Димон">
+<p>Это Димон</p>
+
+<ul>
+  <li>Программирование</li>
+  <li>Играть в комп</li>
+  <li>Гулять</li>
+  <li>Не ходить в школу</li>
+</ul>
+
+<p>Смотри мой <a href="https://kwork.ru/e-commerce-social-network/41988654/infografika-mp" target="_blank">Kwork</a></p>
+
+<script>
+  let coins = parseInt(localStorage.getItem("coins")) || 0;
+  let perClick = parseInt(localStorage.getItem("perClick")) || 1;
+  let upgradeCost = parseInt(localStorage.getItem("upgradeCost")) || 10;
+  let autoClickerCost = parseInt(localStorage.getItem("autoClickerCost")) || 50;
+
+  const coinsEl = document.getElementById("coins");
+  const perClickEl = document.getElementById("perClick");
+  const upgradeCostEl = document.getElementById("upgradeCost");
+  const autoClickerCostEl = document.getElementById("autoClickerCost");
+
+  function updateDisplay() {
+    coinsEl.textContent = coins;
+    perClickEl.textContent = perClick;
+    upgradeCostEl.textContent = upgradeCost;
+    autoClickerCostEl.textContent = autoClickerCost;
+    localStorage.setItem("coins", coins);
+    localStorage.setItem("perClick", perClick);
+    localStorage.setItem("upgradeCost", upgradeCost);
+    localStorage.setItem("autoClickerCost", autoClickerCost);
+  }
+
+  function clickCoin() {
+    coins += perClick;
+    updateDisplay();
+  }
+
+  function buyUpgrade() {
+    if (coins >= upgradeCost) {
+      coins -= upgradeCost;
+      perClick += 1;
+      upgradeCost = Math.floor(upgradeCost * 1.5);
+      updateDisplay();
+    } else {
+      alert("Не хватает монет!");
+    }
+  }
+
+  function buyAutoClicker() {
+    if (coins >= autoClickerCost) {
+      coins -= autoClickerCost;
+      updateDisplay();
+      let clicks = 0;
+      const interval = setInterval(() => {
+        if (clicks >= 60) {
+          clearInterval(interval);
+        } else {
+          coins += perClick;
+          updateDisplay();
+          clicks++;
+        }
+      }, 1000);
+    } else {
+      alert("Не хватает монет!");
+    }
+  }
+
+  window.onload = updateDisplay;
+</script>
+
+</body>
+</html>
